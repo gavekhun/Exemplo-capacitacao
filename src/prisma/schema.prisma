@@ -1,0 +1,37 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id               Int        @id @default(autoincrement())
+  email            String     @unique @db.VarChar(45)
+  senha            String     @db.VarChar(45)
+  role             Boolean
+  bio              String?    @db.VarChar(255)
+  dataDeNascimento DateTime   @db.Date
+  fotoPerfil       String
+  nome             String     @db.VarChar(45)
+  telefone         String     @db.VarChar(45)
+  postagem         Postagem[]
+}
+
+model Postagem {
+  id        Int         @id @default(autoincrement())
+  titulo    String      @db.VarChar(255)
+  conteudo  String
+  usuarioId Int
+  usuario   Usuario     @relation(fields: [usuarioId], references: [id])
+  categoria Categoria[] @relation("CategoriaToPostagem")
+}
+
+model Categoria {
+  id       Int        @id @default(autoincrement())
+  nome     String     @db.VarChar(100)
+  postagem Postagem[] @relation("CategoriaToPostagem")
+}
